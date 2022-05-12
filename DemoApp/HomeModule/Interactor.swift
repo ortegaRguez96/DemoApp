@@ -10,15 +10,15 @@ import Foundation
 protocol AnyInteractor {
     var presenter: AnyPresenter? { get set }
     
-    func fetchData()
+    func fetchData(withText: String, page: Int)
 }
 
 class ImagesInteractor: AnyInteractor {
     
     var presenter: AnyPresenter?
     
-    func fetchData() {
-        NetworkManager.shared.fetchData { [weak self] error, data in
+    func fetchData(withText text: String, page: Int) {
+        NetworkManager.shared.fetchData(query: text, page: page) { [weak self] error, data in
             if let error = error {
                 self?.presenter?.interactorDidFetchData(withResul: .failure(error))
                 return

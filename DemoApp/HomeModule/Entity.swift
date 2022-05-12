@@ -34,31 +34,28 @@ struct DataResult: Codable {
 // MARK: - User
 struct User: Codable {
     let id: String
-    let username, name, firstName, lastName: String?
-    let bio, location: String?
+    let name, firstName, lastName: String?
     let profileImage: ProfileImage
 
     enum CodingKeys: String, CodingKey {
         case id
-        case username, name
+        case name
         case firstName = "first_name"
         case lastName = "last_name"
-        case bio, location
         case profileImage = "profile_image"
     }
 }
 
 // MARK: - Urls
 struct Urls: Codable {
-    let full, regular, small: String
-    let thumb: String?
+    let regular: String
 
     enum CodingKeys: String, CodingKey {
-        case full, regular, small, thumb
+        case regular
     }
 }
 
 // MARK: - ProfileImage
 struct ProfileImage: Codable {
-    let small, medium, large: String
+    let small: String
 }

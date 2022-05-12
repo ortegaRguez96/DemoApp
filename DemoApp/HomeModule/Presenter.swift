@@ -12,21 +12,22 @@ protocol AnyPresenter {
     var interactor: AnyInteractor? { get set }
     var view: AnyView? { get set }
     
-    func interactorDidFetchData(withResul result: Result<[DataResult], Error>)
+    func interactorDidFetchData(withResul result: Result<DataResponse, Error>)
 }
 
 class ImagesPresenter: AnyPresenter {
-    var router: AnyRouter?
     
-    var interactor: AnyInteractor? {
-        didSet {
-            self.interactor?.fetchData()
-        }
-    }
+    var router: AnyRouter?
     
     var view: AnyView?
     
-    func interactorDidFetchData(withResul result: Result<[DataResult], Error>) {
+    var interactor: AnyInteractor? {
+        didSet {
+            self.interactor?.fetchData(withText: "carros", page: 1)
+        }
+    }
+    
+    func interactorDidFetchData(withResul result: Result<DataResponse, Error>) {
         switch result {
         case .success(let data):
             view?.update(withData: data)

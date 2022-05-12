@@ -19,11 +19,11 @@ class NetworkManager {
     static var shared = NetworkManager()
     private var images = NSCache<NSString, NSData>()
     
-    func fetchData(completion:@escaping ((NSError?, [DataResult]?)->Void)) {
+    func fetchData(query: String, page: Int, completion:@escaping ((NSError?, DataResponse?)->Void)) {
         guard var urlComponents = URLComponents(string: Constants.shared.URL) else { return }
         urlComponents.queryItems = [
-            URLQueryItem(name: "page", value: "1"),
-            URLQueryItem(name: "query", value: "anime"),
+            URLQueryItem(name: "page", value: "\(page)"),
+            URLQueryItem(name: "query", value: query),
             URLQueryItem(name: "per_page", value: "10")
         ]
         
@@ -40,11 +40,10 @@ class NetworkManager {
             guard let data = data else { return }
             do {
                 let dataResponse = try JSONDecoder().decode(DataResponse.self, from: data)
-                completion(nil, dataResponse.results)
+                completion(nil, dataResponse)
             } catch let error as NSError {
                 completion(error, nil)
             }
-            
         }
         task.resume()
     }
@@ -62,7 +61,6 @@ class NetworkManager {
             print(error.localizedDescription)
             return nil
         }
-        
     }
     
     
