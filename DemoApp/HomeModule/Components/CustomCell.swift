@@ -14,7 +14,10 @@ class CustomCell: UITableViewCell {
     private var imageViewImg: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFill
         imageView.backgroundColor = .systemGray5
+        imageView.layer.masksToBounds = true
+        imageView.layer.cornerRadius = 10
         return imageView
     }()
     
@@ -22,13 +25,22 @@ class CustomCell: UITableViewCell {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.backgroundColor = .systemGray5
+        imageView.layer.masksToBounds = true
         return imageView
     }()
     
-    private var labelName: UILabel = {
+    private var labelUserName: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .systemFont(ofSize: 18)
+        label.font = .systemFont(ofSize: 16, weight: .semibold)
+        return label
+    }()
+    
+    private var labelDescription: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .systemFont(ofSize: 14)
+        label.numberOfLines = 3
         return label
     }()
     
@@ -46,13 +58,20 @@ class CustomCell: UITableViewCell {
         setupView()
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.imageViewUser.layer.cornerRadius = (self.imageViewUser.bounds.height / 2)
+    }
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         self.data = nil
     }
     
+    //MARK: - BODY FUNCTIONS
     private func setupData(_ data: DataResult) {
-        labelName.text = data.user.firstName
+        labelUserName.text = "\(data.user.firstName ?? "") \(data.user.lastName ?? "")"
+        labelDescription.text = data.description
         Task {
             self.imageViewImg.image = try await getImage(fromStringURL: data.urls.regular)
             self.imageViewUser.image = try await getImage(fromStringURL: data.user.profileImage.small)
@@ -65,42 +84,48 @@ class CustomCell: UITableViewCell {
         return try await NetworkManager.shared.getImage(fromStringURL: url)
     }
     
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+extension CustomCell {
     private func setupView() {
         setupViewConstraints()
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-}
-
-extension CustomCell {
     private func setupViewConstraints() {
         addSubview(self.imageViewImg)
-        [
+        let heightImageConstraint = self.imageViewImg.heightAnchor.constraint(equalToConstant: 180)
+        heightImageConstraint.priority = .init(rawValue: 999)
+        NSLayoutConstraint.activate([
             self.imageViewImg.topAnchor.constraint(equalTo: topAnchor, constant: 20),
             self.imageViewImg.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
             self.imageViewImg.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
-            self.imageViewImg.heightAnchor.constraint(equalToConstant: 120)
-        ].forEach({$0.isActive = true})
+            heightImageConstraint
+        ])
         
         addSubview(self.imageViewUser)
-        [
+        NSLayoutConstraint.activate([
             self.imageViewUser.topAnchor.constraint(equalTo: self.imageViewImg.bottomAnchor, constant: 10),
             self.imageViewUser.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
-            self.imageViewUser.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10),
-            self.imageViewUser.widthAnchor.constraint(equalToConstant: 40),
-            self.imageViewUser.heightAnchor.constraint(equalToConstant: 40)
-        ].forEach({$0.isActive = true})
-        self.imageViewUser.layer.masksToBounds = true
-        self.imageViewUser.layer.cornerRadius = 20
+            self.imageViewUser.heightAnchor.constraint(equalToConstant: 40),
+            self.imageViewUser.widthAnchor.constraint(equalToConstant: 40)
+        ])
         
-        addSubview(self.labelName)
-        [
-            self.labelName.centerYAnchor.constraint(equalTo: self.imageViewUser.centerYAnchor),
-            self.labelName.leftAnchor.constraint(equalTo: self.imageViewUser.rightAnchor, constant: 5),
-            self.labelName.rightAnchor.constraint(equalTo: rightAnchor, constant: -10)
-        ].forEach({$0.isActive = true})
+        addSubview(labelUserName)
+        NSLayoutConstraint.activate([
+            labelUserName.topAnchor.constraint(equalTo: self.imageViewUser.topAnchor),
+            labelUserName.leftAnchor.constraint(equalTo: self.imageViewUser.rightAnchor, constant: 10),
+            labelUserName.rightAnchor.constraint(equalTo: rightAnchor, constant: -20)
+        ])
+        
+        addSubview(self.labelDescription)
+        NSLayoutConstraint.activate([
+            self.labelDescription.topAnchor.constraint(equalTo: self.labelUserName.bottomAnchor, constant: 5),
+            self.labelDescription.leftAnchor.constraint(equalTo: self.labelUserName.leftAnchor),
+            self.labelDescription.rightAnchor.constraint(equalTo: self.labelUserName.rightAnchor),
+            self.labelDescription.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -20)
+        ])
     }
 }

@@ -23,15 +23,14 @@ class NetworkManager {
         guard var urlComponents = URLComponents(string: Constants.shared.URL) else { return }
         urlComponents.queryItems = [
             URLQueryItem(name: "page", value: "1"),
-            URLQueryItem(name: "query", value: "music"),
+            URLQueryItem(name: "query", value: "anime"),
             URLQueryItem(name: "per_page", value: "10")
         ]
         
         guard let url = urlComponents.url else { return }
+        guard let apiKey = Bundle.main.object(forInfoDictionaryKey: "ApiKey") as? String else { return }
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        
-        guard let apiKey = Bundle.main.object(forInfoDictionaryKey: "ApiKey") as? String else { return }
         request.setValue("Client-ID \(apiKey)", forHTTPHeaderField: "Authorization")
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {

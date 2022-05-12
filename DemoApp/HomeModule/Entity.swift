@@ -24,11 +24,10 @@ struct DataResult: Codable {
     let id: String
     let user: User
     let urls: Urls
+    let description: String?
 
     enum CodingKeys: String, CodingKey {
-        case id
-        case user
-        case urls
+        case id, user, urls, description
     }
 }
 

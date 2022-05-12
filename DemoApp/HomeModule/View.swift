@@ -28,8 +28,9 @@ class ImagesViewController: UIViewController, AnyView {
     }()
     
     //MARK: - PROPERTIES
-    var data: [DataResult] = []
     private let cellId = "CellId"
+    
+    var data: [DataResult] = []
     
     //MARK: - LIFE CYCLE
     override func viewDidLoad() {
@@ -44,12 +45,11 @@ class ImagesViewController: UIViewController, AnyView {
     
     //MARK: - BODY FUNCTIONS
     func update(withData data: [DataResult]) {
-        self.data = data
         DispatchQueue.main.async {
+            self.data = data
             self.tableView.reloadData()
         }
     }
-    
 }
 
 extension ImagesViewController: UITableViewDataSource, UITableViewDelegate {
