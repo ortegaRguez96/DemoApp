@@ -23,7 +23,6 @@ class ImagesViewController: UIViewController, AnyView {
         let searchBar = UISearchBar()
         searchBar.showsSearchResultsButton = true
         searchBar.delegate = self
-        searchBar.backgroundColor = .clear
         return searchBar
     }()
     
@@ -37,7 +36,7 @@ class ImagesViewController: UIViewController, AnyView {
         table.register(CustomCell.self, forCellReuseIdentifier: self.cellId)
         table.delegate = self
         table.dataSource = self
-        table.backgroundColor = .clear
+        table.keyboardDismissMode = .onDrag
         return table
     }()
     
@@ -52,7 +51,6 @@ class ImagesViewController: UIViewController, AnyView {
     //MARK: - LIFE CYCLE
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
         view.addSubview(tableView)
         view.addSubview(searchBar)
         view.addSubview(stepper)
